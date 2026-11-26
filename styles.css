@@ -141,7 +141,8 @@ details.card[open] > summary { margin-bottom: 0; }
 .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .label { font-size: 0.875rem; font-weight: 550; color: var(--muted); }
 .optional { font-weight: 400; }
-small, .small-print { color: var(--muted); font-size: 0.8125rem; }
+small, .small-print, .tip { color: var(--muted); font-size: 0.8125rem; }
+.tip { margin: 0 0 12px; }
 .small-print { margin: 12px 0 0; }
 
 input, select {

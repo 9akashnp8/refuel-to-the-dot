@@ -156,7 +156,7 @@ function methodBlock(name, m, isPrimary, body) {
   return `<div class="method"><div class="method-head"><span class="method-name">${name}</span>${tag}</div>${inner}</div>`;
 }
 
-function mileageLabel(inputs) {
+function efficiencyLabel(inputs) {
   return inputs.efficiencyUnit === 'l100'
     ? `${fmt(inputs.efficiency)} L/100 km`
     : `${fmt(inputs.efficiency)} km/L`;
@@ -175,7 +175,7 @@ function renderResult(r, inputs) {
 
   if (!r.primaryKey) {
     $('resLitres').textContent = '—';
-    note.textContent = 'Enter mileage and distance to return, plus odometer or gauge readings.';
+    note.textContent = 'Enter fuel efficiency and distance to return, plus odometer or gauge readings.';
     $('dockValue').textContent = '—';
     $('dockAmount').textContent = 'Enter readings';
   } else if (r.noFuelNeeded) {
@@ -190,7 +190,7 @@ function renderResult(r, inputs) {
     if (r.amount !== null) amount.textContent = `≈ ${money(r.amount)}`;
     const marginTxt = r.margin > 0 ? ` Includes ${fmt(r.margin)} L margin.` : '';
     note.textContent = r.primaryKey === 'consumption'
-      ? `Based on distance driven and your mileage.${marginTxt}`
+      ? `Based on distance driven and your fuel efficiency.${marginTxt}`
       : `Based on the fuel gauge.${marginTxt} Add odometer readings for a more precise figure.`;
     $('dockValue').textContent = `${fmt(r.litres)} L`;
     $('dockAmount').textContent = r.amount !== null ? money(r.amount) : '';
@@ -205,7 +205,7 @@ function renderResult(r, inputs) {
     cBody =
       row('Driven so far', `${fmt(c.driven, 0)} km`) +
       row('Still to drive', `${fmt(inputs.remainingKm, 0)} km`) +
-      row(`Burned at ${mileageLabel(inputs)}`, `${fmt(c.burned)} L`) +
+      row(`Burned at ${efficiencyLabel(inputs)}`, `${fmt(c.burned)} L`) +
       row('Already added', `− ${fmt(c.added)} L`) +
       row('Needed', `${fmt(c.need)} L`, true);
   }
@@ -217,7 +217,7 @@ function renderResult(r, inputs) {
       : `${-g.barsShort} ${barWord} above pickup`;
     gBody =
       row(shortLabel, `${g.short >= 0 ? '' : '− '}${fmt(Math.abs(g.short))} L`) +
-      row(`Drive back at ${mileageLabel(inputs)}`, `${fmt(g.driveBack)} L`) +
+      row(`Drive back at ${efficiencyLabel(inputs)}`, `${fmt(g.driveBack)} L`) +
       row('Needed', `${fmt(g.need)} L`, true);
   }
   let agree = '';
@@ -235,9 +235,9 @@ function renderResult(r, inputs) {
 function renderSetupSummary(segs) {
   const bits = [];
   const tank = parseNum(state.tank);
-  const eff = parseNum(state.efficiency);
+  const odo = parseNum(state.pickupOdo);
   if (tank > 0) bits.push(`${fmt(tank, tank % 1 ? 1 : 0)} L`);
-  if (eff > 0) bits.push(`${fmt(eff, eff % 1 ? 1 : 0)} ${state.effUnit === 'l100' ? 'L/100' : 'km/L'}`);
+  if (odo >= 0) bits.push(`${Math.round(odo).toLocaleString()} km`);
   if (state.pickupLevel !== null) bits.push(`pickup ${state.pickupLevel}/${segs}`);
   $('setupSummary').textContent = bits.join(' · ');
 }
@@ -389,7 +389,7 @@ function init() {
   });
 
   // Collapse the setup card once the car and pickup are filled in.
-  const setupDone = parseNum(state.efficiency) > 0 && (parseNum(state.pickupOdo) >= 0 || state.pickupLevel !== null);
+  const setupDone = parseNum(state.pickupOdo) >= 0 || state.pickupLevel !== null;
   $('setup').open = !setupDone;
 
   render();

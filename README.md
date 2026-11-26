@@ -11,23 +11,23 @@ It uses two methods side by side:
 **1. By distance driven** (preferred when you have odometer readings)
 
 ```
-to add = (km driven so far + km still to drive) ÷ mileage − litres already added this trip
+to add = (km driven so far + km still to drive) ÷ fuel efficiency − litres already added this trip
 ```
 
-This never reads the fuel gauge, so it avoids the gauge's coarse bars (one bar on a 50 L, 8-bar tank is about 6 L). Its accuracy depends on the mileage figure, so reset Trip B when you pick up the car and use its average.
+This never reads the fuel gauge, so it avoids the gauge's coarse bars (one bar on a 50 L, 8-bar tank is about 6 L). Its accuracy depends on the fuel efficiency figure. That's why it's entered at the pump: reset Trip B when you pick up the car, then use the trip average it shows.
 
 **2. By fuel gauge** (fallback and cross-check)
 
 ```
-to add = (pickup bars − current bars) × (tank size ÷ bars) + km still to drive ÷ mileage
+to add = (pickup bars − current bars) × (tank size ÷ bars) + km still to drive ÷ fuel efficiency
 ```
 
 When both methods can run, the app shows both. It warns you if they differ by more than one bar's worth of fuel, which usually means a wrong reading. A small safety margin (0.5 L by default) is added so the needle doesn't land just under the mark. If you enter a price per litre, the amount is shown too, which helps at pumps that work by amount.
 
 ## Using it
 
-1. **At pickup:** enter tank size, mileage, the odometer reading, and tap the fuel gauge bar that matches the car.
-2. **At any fuel stop:** enter the current odometer reading, the distance to the return point and the current gauge level. The answer appears in the bar at the bottom.
+1. **At pickup:** enter the tank size and the odometer reading, tap the fuel gauge bar that matches the car, and reset the dashboard's trip meter (Trip B).
+2. **At any fuel stop:** enter the current odometer reading, the distance to the return point, the trip's average fuel efficiency from the dashboard and the current gauge level. The answer appears in the bar at the bottom.
 3. **After filling:** tap *Log fill-up* so later stops account for it.
 
 ## Development

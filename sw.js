@@ -1,6 +1,6 @@
 // Offline support: serve the app shell from cache, refresh it in the background.
 // Bump CACHE when shipping changes so old caches are cleared.
-const CACHE = 'refuel-v1';
+const CACHE = 'refuel-v2';
 const ASSETS = [
   './',
   'index.html',

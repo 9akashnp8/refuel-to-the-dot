@@ -50,7 +50,7 @@ function isLevel(x, segments) {
  * Work out how much fuel to add so the car is returned at its pickup level.
  *
  * Two independent methods:
- *  - consumption: litres burned over the whole trip (distance / mileage) minus
+ *  - consumption: litres burned over the whole trip (distance / fuel efficiency) minus
  *    litres already added. Needs odometer readings, not the gauge.
  *  - gauge: bars short of the pickup level converted to litres, plus fuel for
  *    the drive back. Needs tank size and gauge readings.
@@ -72,7 +72,7 @@ export function computeRefuel(i) {
   const barLitres = hasGaugeScale ? i.tank / i.segments : NaN;
 
   const consumption = { ok: false, missing: [] };
-  if (!hasKmpl) consumption.missing.push('mileage');
+  if (!hasKmpl) consumption.missing.push('fuel efficiency');
   if (!hasRemaining) consumption.missing.push('km to return');
   if (!(i.pickupOdo >= 0)) consumption.missing.push('odometer at pickup');
   if (!(i.nowOdo >= 0)) consumption.missing.push('odometer now');
@@ -88,7 +88,7 @@ export function computeRefuel(i) {
   }
 
   const gauge = { ok: false, missing: [] };
-  if (!hasKmpl) gauge.missing.push('mileage');
+  if (!hasKmpl) gauge.missing.push('fuel efficiency');
   if (!hasRemaining) gauge.missing.push('km to return');
   if (!(i.tank > 0)) gauge.missing.push('tank size');
   if (!(i.segments > 0)) gauge.missing.push('bars on gauge');
@@ -138,7 +138,7 @@ export function computeRefuel(i) {
     if (!res.methodsAgree) {
       res.warnings.push(
         `The two methods differ by ${res.methodDiff.toFixed(1)} L, more than one bar. ` +
-          'Check the mileage figure and the gauge readings.'
+          'Check the fuel efficiency figure and the gauge readings.'
       );
     }
   }

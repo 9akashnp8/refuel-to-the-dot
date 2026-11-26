@@ -37,21 +37,11 @@
           <input id="segments" inputmode="numeric" autocomplete="off" placeholder="8">
         </label>
         <label class="field span-2">
-          <span class="label">Mileage</span>
-          <span class="input-unit">
-            <input id="efficiency" inputmode="decimal" autocomplete="off" placeholder="15">
-            <select id="effUnit" aria-label="Mileage unit">
-              <option value="kmpl">km/L</option>
-              <option value="l100">L/100 km</option>
-            </select>
-          </span>
-          <small>Tip: reset Trip B at pickup. Its average is this trip's real mileage.</small>
-        </label>
-        <label class="field span-2">
           <span class="label">Odometer at pickup</span>
           <span class="input-unit"><input id="pickupOdo" inputmode="decimal" autocomplete="off" placeholder="12000"><span class="unit">km</span></span>
         </label>
       </div>
+      <p class="tip">Reset the dashboard's trip meter (Trip B) now. At the pump it will show the fuel efficiency of your own driving on this trip.</p>
       <div class="gauge" data-gauge="pickupLevel">
         <div class="gauge-head"><span class="label">Fuel at pickup</span><output></output></div>
         <div class="gauge-row">
@@ -72,6 +62,17 @@
         <label class="field">
           <span class="label">Distance to return</span>
           <span class="input-unit"><input id="remainingKm" inputmode="decimal" autocomplete="off"><span class="unit">km</span></span>
+        </label>
+        <label class="field span-2">
+          <span class="label">Fuel efficiency (trip average)</span>
+          <span class="input-unit">
+            <input id="efficiency" inputmode="decimal" autocomplete="off" placeholder="15">
+            <select id="effUnit" aria-label="Fuel efficiency unit">
+              <option value="kmpl">km/L</option>
+              <option value="l100">L/100 km</option>
+            </select>
+          </span>
+          <small>Read it from the dashboard's trip average. If you didn't reset the trip meter, use the car's usual figure but go a little lower to be safe.</small>
         </label>
       </div>
       <div class="gauge" data-gauge="nowLevel">
@@ -94,7 +95,7 @@
       <h2 class="card-title">Add at this stop</h2>
       <div class="big"><span id="resLitres">—</span><span class="big-unit" id="resLitresUnit">L</span></div>
       <div class="amount" id="resAmount"></div>
-      <p class="note" id="resNote">Enter mileage and distance to return, plus odometer or gauge readings.</p>
+      <p class="note" id="resNote">Enter fuel efficiency and distance to return, plus odometer or gauge readings.</p>
       <ul class="warnings" id="resWarnings"></ul>
       <div class="methods" id="methods"></div>
 
