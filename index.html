@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Refuel to the Dot</title>
+  <meta name="description" content="Work out exactly how much fuel to add before returning a rental car.">
+  <meta name="theme-color" content="#0f766e" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0b1514" media="(prefers-color-scheme: dark)">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Refuel">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <header class="top">
+    <h1>Refuel to the Dot</h1>
+    <p>Return the rental with the fuel you got, not a drop more.</p>
+  </header>
+
+  <main>
+    <details id="setup" class="card" open>
+      <summary>
+        <span class="card-title">Car &amp; pickup</span>
+        <span class="summary-meta" id="setupSummary"></span>
+      </summary>
+      <div class="grid">
+        <label class="field">
+          <span class="label">Tank size</span>
+          <span class="input-unit"><input id="tank" inputmode="decimal" autocomplete="off" placeholder="45"><span class="unit">L</span></span>
+        </label>
+        <label class="field">
+          <span class="label">Bars on gauge when full</span>
+          <input id="segments" inputmode="numeric" autocomplete="off" placeholder="8">
+        </label>
+        <label class="field span-2">
+          <span class="label">Mileage</span>
+          <span class="input-unit">
+            <input id="efficiency" inputmode="decimal" autocomplete="off" placeholder="15">
+            <select id="effUnit" aria-label="Mileage unit">
+              <option value="kmpl">km/L</option>
+              <option value="l100">L/100 km</option>
+            </select>
+          </span>
+          <small>Tip: reset Trip B at pickup. Its average is this trip's real mileage.</small>
+        </label>
+        <label class="field span-2">
+          <span class="label">Odometer at pickup</span>
+          <span class="input-unit"><input id="pickupOdo" inputmode="decimal" autocomplete="off" placeholder="12000"><span class="unit">km</span></span>
+        </label>
+      </div>
+      <div class="gauge" data-gauge="pickupLevel">
+        <div class="gauge-head"><span class="label">Fuel at pickup</span><output></output></div>
+        <div class="gauge-row">
+          <button type="button" class="step" data-step="-1" aria-label="One bar less">−</button>
+          <div class="bars" role="group" aria-label="Fuel at pickup"></div>
+          <button type="button" class="step" data-step="1" aria-label="One bar more">+</button>
+        </div>
+      </div>
+    </details>
+
+    <section class="card">
+      <h2 class="card-title">At the pump</h2>
+      <div class="grid">
+        <label class="field">
+          <span class="label">Odometer now</span>
+          <span class="input-unit"><input id="nowOdo" inputmode="decimal" autocomplete="off"><span class="unit">km</span></span>
+        </label>
+        <label class="field">
+          <span class="label">Distance to return</span>
+          <span class="input-unit"><input id="remainingKm" inputmode="decimal" autocomplete="off"><span class="unit">km</span></span>
+        </label>
+      </div>
+      <div class="gauge" data-gauge="nowLevel">
+        <div class="gauge-head"><span class="label">Fuel now</span><output></output></div>
+        <div class="gauge-row">
+          <button type="button" class="step" data-step="-1" aria-label="One bar less">−</button>
+          <div class="bars" role="group" aria-label="Fuel now"></div>
+          <button type="button" class="step" data-step="1" aria-label="One bar more">+</button>
+        </div>
+      </div>
+      <div class="grid">
+        <label class="field span-2">
+          <span class="label">Price per litre <span class="optional">(optional)</span></span>
+          <span class="input-unit"><input id="price" inputmode="decimal" autocomplete="off" placeholder="105.50"><span class="unit" id="priceUnit">/ L</span></span>
+        </label>
+      </div>
+    </section>
+
+    <section class="card result" id="result" aria-live="polite">
+      <h2 class="card-title">Add at this stop</h2>
+      <div class="big"><span id="resLitres">—</span><span class="big-unit" id="resLitresUnit">L</span></div>
+      <div class="amount" id="resAmount"></div>
+      <p class="note" id="resNote">Enter mileage and distance to return, plus odometer or gauge readings.</p>
+      <ul class="warnings" id="resWarnings"></ul>
+      <div class="methods" id="methods"></div>
+
+      <div class="log">
+        <label class="field">
+          <span class="label">Filled up? Log it so the next stop is right.</span>
+          <span class="log-row">
+            <span class="input-unit"><input id="logLitres" inputmode="decimal" autocomplete="off"><span class="unit">L</span></span>
+            <button type="button" class="btn primary" id="logBtn">Log fill-up</button>
+          </span>
+        </label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="card-title">Fill-ups this trip <span class="count" id="fillCount"></span></h2>
+      <ul class="fills" id="fills"></ul>
+      <p class="empty" id="fillsEmpty">None yet. Add any fuel you've already put in on this trip.</p>
+      <div class="add-fill">
+        <span class="input-unit"><input id="addLitres" inputmode="decimal" autocomplete="off" placeholder="Litres" aria-label="Litres added"><span class="unit">L</span></span>
+        <button type="button" class="btn" id="addBtn">Add</button>
+      </div>
+    </section>
+
+    <details class="card">
+      <summary><span class="card-title">Settings</span></summary>
+      <div class="grid">
+        <label class="field">
+          <span class="label">Safety margin</span>
+          <span class="input-unit"><input id="margin" inputmode="decimal" autocomplete="off" placeholder="0.5"><span class="unit">L</span></span>
+          <small>Added on top so the needle doesn't land just below the mark.</small>
+        </label>
+        <label class="field">
+          <span class="label">Currency symbol</span>
+          <input id="currency" autocomplete="off" placeholder="₹, $, AED…" maxlength="4">
+        </label>
+      </div>
+      <button type="button" class="btn danger" id="resetBtn">Start a new trip</button>
+      <p class="small-print">Everything stays on this phone. Add the page to your home screen to use it offline.</p>
+    </details>
+  </main>
+
+  <button type="button" class="dock" id="dock" aria-label="Jump to result">
+    <span class="dock-label">Add</span>
+    <span class="dock-value" id="dockValue">—</span>
+    <span class="dock-amount" id="dockAmount"></span>
+  </button>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
